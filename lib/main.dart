@@ -2,7 +2,7 @@ import 'app/ui/main_app_runner.dart';
 import 'app/ui/main_app_builder.dart';
 
 void main() {
-  const env = String.fromEnvironment("env", defaultValue: "test");
+  const env = String.fromEnvironment("env", defaultValue: "prod");
   final runner = MainAppRunner(env);
   final builder = MainAppBuilder();
   
