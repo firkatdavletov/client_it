@@ -1,3 +1,4 @@
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
@@ -13,13 +14,11 @@ class DioAppApi implements AppApi {
 
   DioAppApi(AppConfig appConfig) {
     final options = BaseOptions(
-        baseUrl: appConfig.baseUrl,
-        connectTimeout: 15000
+      baseUrl: appConfig.baseUrl,
+      connectTimeout: 15000,
     );
     dio = Dio(options);
-    if (kDebugMode) {
-      dio.interceptors.add(PrettyDioLogger());
-    }
+    if (kDebugMode) dio.interceptors.add(PrettyDioLogger());
     dio.interceptors.add(AuthInterceptor());
   }
 
@@ -27,63 +26,75 @@ class DioAppApi implements AppApi {
   Future<Response> getProfile() {
     try {
       return dio.get("/auth/user");
-    } catch(_) {
+    } catch (_) {
       rethrow;
     }
   }
 
   @override
-  Future<Response> passwordUpdate({required String oldPassword, required String newPassword}) {
-    // TODO: implement passwordUpdate
-    throw UnimplementedError();
+  Future<Response> passwordUpdate(
+      {required String oldPassword, required String newPassword}) {
+    return dio.put("/auth/user", queryParameters: {
+      "oldPassword": oldPassword,
+      "newPassword": newPassword,
+    });
   }
 
   @override
   Future<Response> refreshToken({String? refreshToken}) {
     try {
       return dio.post("/auth/token/$refreshToken");
-    } catch(_) {
+    } catch (_) {
       rethrow;
     }
   }
 
   @override
-  Future<Response> signIn({required String password, required String username}) {
+  Future<Response> signIn(
+      {required String password, required String username}) {
     try {
-      return dio.post("/auth/token", data: {
-        "username": username,
-        "password": password
-      });
-    } catch(_) {
+      return dio.post("/auth/token",
+          data: {"username": username, "password": password});
+    } catch (_) {
       rethrow;
     }
   }
 
   @override
-  Future<Response> signUp({required String password, required String username, required String email}) {
+  Future<Response> signUp(
+      {required String password,
+        required String username,
+        required String email}) {
     try {
       return dio.put("/auth/token", data: {
         "username": username,
         "password": password,
-        "email" : email
+        "email": email,
       });
-    } catch(_) {
+    } catch (_) {
       rethrow;
     }
   }
 
   @override
   Future<Response> userUpdate({String? username, String? email}) {
-    // TODO: implement userUpdate
-    throw UnimplementedError();
+    return dio.post("/auth/user", data: {
+      "username": username,
+      "email": email,
+    });
   }
 
   @override
   Future request(String path) {
     try {
       return dio.request(path);
-    } catch(_) {
+    } catch (_) {
       rethrow;
     }
+  }
+
+  @override
+  Future fetch(RequestOptions requestOptions) {
+    return dio.fetch(requestOptions);
   }
 }
