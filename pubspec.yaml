@@ -44,6 +44,9 @@ dependencies:
   freezed_annotation: ^2.2.0
   flutter_bloc: ^8.1.1
   json_serializable: ^6.5.4
+  hydrated_bloc: 8.1.0
+  path_provider: ^2.0.11
+  pretty_dio_logger: ^1.2.0-beta-1
 
 dev_dependencies:
   flutter_test:

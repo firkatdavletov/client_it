@@ -1,4 +1,4 @@
-import 'package:client_it_product/app/data/dio_container.dart';
+import 'package:client_it_product/app/domain/app_api.dart';
 import 'package:client_it_product/feature/auth/data/dto/user_dto.dart';
 import 'package:client_it_product/feature/auth/domain/auth_repository.dart';
 import 'package:injectable/injectable.dart';
@@ -6,16 +6,20 @@ import 'package:injectable/injectable.dart';
 import '../domain/entities/user_entity/user_entity.dart';
 
 @Injectable(as: AuthRepository)
-@prod
-class NetworkAuthRepository implements AuthRepository {
-  final DioContainer dioContainer;
 
-  NetworkAuthRepository(this.dioContainer);
+class NetworkAuthRepository implements AuthRepository {
+  final AppApi api;
+
+  NetworkAuthRepository(this.api);
 
   @override
-  Future getProfile() {
-    // TODO: implement getProfile
-    throw UnimplementedError();
+  Future<UserEntity> getProfile() async {
+    try {
+      final response = await api.getProfile();
+      return UserDto.fromJson(response.data["data"]).toEntity();
+    } catch(_) {
+      rethrow;
+    }
   }
 
   @override
@@ -25,19 +29,9 @@ class NetworkAuthRepository implements AuthRepository {
   }
 
   @override
-  Future refreshToken({required String token}) {
-    // TODO: implement refreshToken
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<UserEntity> signIn({required String password,
-    required String username}) async {
+  Future<UserEntity> refreshToken({String? refreshToken}) async {
     try {
-      final response = await dioContainer.dio.post("/auth/token", data: {
-            "username": username,
-            "password": password
-          });
+      final response = await api.refreshToken(refreshToken: refreshToken);
       return UserDto.fromJson(response.data["data"]).toEntity();
     } catch(_) {
       rethrow;
@@ -45,14 +39,21 @@ class NetworkAuthRepository implements AuthRepository {
   }
 
   @override
-  Future signUp({required String password, required String username,
+  Future<UserEntity> signIn({required String password,
+    required String username}) async {
+    try {
+      final response = await api.signIn(password: password, username: username);
+      return UserDto.fromJson(response.data["data"]).toEntity();
+    } catch(_) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<UserEntity> signUp({required String password, required String username,
     required String email}) async {
     try {
-      final response = await dioContainer.dio.put("/auth/token", data: {
-        "username": username,
-        "password": password,
-        "email" : email
-      });
+      final response = await api.signUp(password: password, username: username, email: email);
       return UserDto.fromJson(response.data["data"]).toEntity();
     } catch(_) {
       rethrow;
