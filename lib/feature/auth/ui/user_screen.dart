@@ -6,6 +6,7 @@ import 'package:client_it_product/app/ui/components/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../app/ui/components/app_dialog.dart';
 import '../domain/auth_state/auth_cubit.dart';
 
 class UserScreen extends StatelessWidget {
@@ -69,14 +70,37 @@ class UserScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                   TextButton(
-                      onPressed: (){},
+                      onPressed: (){
+                        showDialog(
+                            context: context,
+                            builder: (context) => AppDialog(
+                              val1: "Old password",
+                              val2: "New password",
+                              onPressed: (v1, v2) {
+                                context.read<AuthCubit>().passwordUpdate(
+                                    oldPassword: v1,
+                                    newPassword: v2
+                                );
+                              },
+                            )
+                        );
+                      },
                       child: const Text("Обновить пароль")
                   ),
                   TextButton(
                       onPressed: (){
                         showDialog(
                             context: context,
-                            builder: (context) => const _UserUpdateDialog()
+                            builder: (context) => AppDialog(
+                              val1: "Username",
+                              val2: "Email",
+                              onPressed: (v1, v2) {
+                                context.read<AuthCubit>().userUpdate(
+                                    username: v1,
+                                    email: v2
+                                );
+                              },
+                            )
                         );
                       },
                       child: const Text("Обновить данные")
@@ -88,59 +112,6 @@ class UserScreen extends StatelessWidget {
           );
         },
       )
-    );
-  }
-}
-
-class _UserUpdateDialog extends StatefulWidget {
-  const _UserUpdateDialog({Key? key}) : super(key: key);
-
-  @override
-  State<_UserUpdateDialog> createState() => _UserUpdateDialogState();
-}
-
-class _UserUpdateDialogState extends State<_UserUpdateDialog> {
-  final emailController = TextEditingController();
-  final usernameController = TextEditingController();
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    usernameController.dispose();
-    super.dispose();
-  }
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialog(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              AppTextField(
-                  controller: usernameController,
-                  labelText: "Username"
-              ),
-              const SizedBox(height: 16.0,),
-              AppTextField(
-                  controller: emailController,
-                  labelText: "Email"
-              ),
-              const SizedBox(height: 16.0,),
-              AppElevatedButton(
-                  onPressed: (){
-                    Navigator.pop(context);
-                    context.read<AuthCubit>().userUpdate(
-                        username: usernameController.text,
-                        email: emailController.text
-                    );
-                  },
-                  text: "Применить"
-              )
-            ],
-          ),
-        )
-      ],
     );
   }
 }

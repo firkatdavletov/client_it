@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
@@ -96,5 +95,28 @@ class DioAppApi implements AppApi {
   @override
   Future fetch(RequestOptions requestOptions) {
     return dio.fetch(requestOptions);
+  }
+
+  @override
+  Future fetchPosts() {
+    return dio.get("/data/posts");
+  }
+
+  @override
+  Future fetchPost(String id) {
+    return dio.get("/data/posts/$id");
+  }
+
+  @override
+  Future createPost(Map args) {
+    return dio.post("/data/posts", data: {
+      "name": args["name"],
+      "content": args["content"]
+    });
+  }
+
+  @override
+  Future deletePost(String id) {
+    return dio.delete("/data/posts/$id");
   }
 }

@@ -1,11 +1,12 @@
 import 'package:client_it_product/app/domain/app_builder.dart';
 import 'package:client_it_product/app/ui/root_screen.dart';
-import 'package:client_it_product/feature/auth/domain/auth_repository.dart';
 import 'package:client_it_product/feature/auth/domain/auth_state/auth_cubit.dart';
+import 'package:client_it_product/feature/posts/domain/state/cubit/post_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../feature/posts/domain/post_repo.dart';
 import '../di/init_di.dart';
 
 class MainAppBuilder implements AppBuilder {
@@ -28,6 +29,9 @@ class _GlobalProviders extends StatelessWidget {
         providers: [
           BlocProvider(
               create: (context) => locator.get<AuthCubit>(),
+          ),
+          BlocProvider(
+            create: (context) => PostCubit(locator.get<PostRepo>(), locator.get<AuthCubit>())..fetchPosts(),
           )
         ],
         child: child

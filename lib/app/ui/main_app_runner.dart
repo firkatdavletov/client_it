@@ -31,5 +31,4 @@ class MainAppRunner implements AppRunner {
       storage: storage,
     );
   }
-  
 }
